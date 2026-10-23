@@ -1,27 +1,55 @@
 import { ArrowUpRight, CircleHelp } from 'lucide-react';
+import {
+  isWhatsAppConfigured,
+  serviceCategories,
+  serviceNotice,
+} from '../config';
 import SectionHeading from '../components/SectionHeading';
-import { getWhatsAppUrl } from '../config';
-
-const services = [
-  { number: '01', title: 'Refleksi', description: 'Informasi mengenai pilihan layanan refleksi akan dikonfirmasi oleh pengelola.' },
-  { number: '02', title: 'Perawatan tubuh', description: 'Jenis perawatan, durasi, dan ketentuan layanan perlu diverifikasi sebelum dipublikasikan.' },
-  { number: '03', title: 'Paket layanan', description: 'Ketersediaan paket dan harga dapat ditanyakan langsung melalui kontak resmi.' },
-];
+import WhatsAppButton from '../components/WhatsAppButton';
 
 export default function ServicesSection() {
+  const whatsappReady = isWhatsAppConfigured();
+
   return (
     <section className="section services-section" id="layanan">
-      <SectionHeading eyebrow="PILIHAN LAYANAN" title="Temukan layanan yang sesuai." description="Lihat gambaran kategori layanan. Hubungi tim Senzu untuk memastikan jenis treatment, durasi, harga, dan ketersediaan terbaru." />
+      <SectionHeading
+        eyebrow="Pilihan layanan"
+        title="Temukan layanan yang sesuai."
+        description="Lihat gambaran kategori layanan. Hubungi tim Senzu untuk memastikan jenis treatment, durasi, harga, dan ketersediaan terbaru."
+      />
+
       <div className="service-list">
-        {services.map((service) => (
-          <article className="service-row" key={service.number}>
-            <span className="service-number">{service.number}</span>
-            <div className="service-content"><h3>{service.title}</h3><p>{service.description}</p></div>
-            <a className="service-link" href={getWhatsAppUrl(`Halo Senzu Reflexology, saya ingin bertanya tentang ${service.title.toLowerCase()}.`)} aria-label={`Tanyakan tentang ${service.title}`}><ArrowUpRight /></a>
+        {serviceCategories.map((service, index) => (
+          <article className="service-row" key={service.id}>
+            <span className="service-number" aria-hidden="true">
+              0{index + 1}
+            </span>
+            <div className="service-content">
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+            </div>
+            <WhatsAppButton
+              className="service-link"
+              message={service.message}
+              ariaLabel={
+                whatsappReady
+                  ? `Tanyakan tentang ${service.title} melalui WhatsApp`
+                  : `Lihat informasi kontak untuk menanyakan ${service.title}`
+              }
+            >
+              <ArrowUpRight aria-hidden="true" />
+            </WhatsAppButton>
           </article>
         ))}
       </div>
-      <p className="service-disclaimer"><CircleHelp size={16} /> Daftar ini merupakan kerangka awal, bukan konfirmasi katalog layanan resmi.</p>
+
+      <div className="service-footnote">
+        <CircleHelp size={18} aria-hidden="true" />
+        <div>
+          <strong>Informasi layanan lengkap belum tersedia.</strong>
+          <p>{serviceNotice}</p>
+        </div>
+      </div>
     </section>
   );
 }

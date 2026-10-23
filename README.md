@@ -10,7 +10,7 @@ Landing page informatif untuk bisnis Senzu Reflexology. Proyek ini terpisah dari
 - Vitest + Testing Library (pengujian dasar)
 
 ## Persyaratan
-- Node.js versi LTS (disarankan Node.js 20 atau lebih baru)
+- Node.js 22.12 atau lebih baru (dibutuhkan oleh Vitest 5)
 - npm
 - Git
 
@@ -46,28 +46,43 @@ Salin `.env.example` menjadi `.env` dan isi data yang sudah dikonfirmasi oleh pe
 
 Jangan masukkan password, token privat, atau rahasia apa pun ke variabel `VITE_*`; nilainya akan terekspos ke browser. Data yang belum dikonfirmasi harus tetap menjadi placeholder dan tidak boleh dipublikasikan sebagai fakta.
 
+Nilai kosong pada `VITE_WHATSAPP_NUMBER`, `VITE_BUSINESS_ADDRESS`, `VITE_BUSINESS_HOURS`, atau `VITE_GOOGLE_MAPS_URL` akan tampil sebagai status “perlu dikonfirmasi”. Teks yang masih mengandung frasa “perlu dikonfirmasi” atau “belum dikonfirmasi” juga tidak dianggap sebagai data final. Tautan WhatsApp baru aktif setelah nomor internasional yang valid diisi; sebelum itu semua CTA diarahkan ke bagian kontak.
+
 ## Struktur direktori
 
 ```text
 senzu-reflexology/
 ├── public/
+│   ├── images/
+│   │   ├── hero-refleksi.webp
+│   │   ├── galeri-batu-panas.webp
+│   │   ├── galeri-perawatan.webp
+│   │   └── galeri-oli.webp
 │   ├── favicon.svg
-│   └── robots.txt
+│   ├── robots.txt
+│   └── site.webmanifest
 ├── src/
 │   ├── components/
-│   │   └── SectionHeading.tsx
+│   │   ├── PendingBadge.tsx
+│   │   ├── SectionHeading.tsx
+│   │   ├── SiteFooter.tsx
+│   │   ├── SiteHeader.tsx
+│   │   └── WhatsAppButton.tsx
 │   ├── sections/
 │   │   ├── AboutSection.tsx
 │   │   ├── ContactSection.tsx
 │   │   ├── GallerySection.tsx
 │   │   ├── HeroSection.tsx
 │   │   └── ServicesSection.tsx
+│   ├── test/
+│   │   ├── App.test.tsx
+│   │   ├── ContactSection.test.tsx
+│   │   ├── config.test.ts
+│   │   └── setup.ts
 │   ├── App.tsx
 │   ├── config.ts
 │   ├── index.css
-│   ├── main.tsx
-│   └── test/
-│       └── setup.ts
+│   └── main.tsx
 ├── .env.example
 ├── .gitignore
 ├── index.html
@@ -96,6 +111,8 @@ Ganti `USERNAME` dengan username GitHub Anda. Jika repository sudah memiliki com
 
 ## Deployment
 
+Proyek ini adalah situs statis Vite tanpa backend, router, atau API. Tidak diperlukan konfigurasi rewrite server. Node.js 22.12+ disarankan agar perilaku build dan test sama dengan lokal.
+
 ### Vercel
 - Import repository `senzu-reflexology`.
 - Framework preset: Vite.
@@ -112,3 +129,11 @@ Ganti `USERNAME` dengan username GitHub Anda. Jika repository sudah memiliki com
 ## Status data konten
 
 Konten awal sengaja menggunakan teks umum dan placeholder untuk detail yang belum diverifikasi. Sebelum publikasi, konfirmasi nama/identitas brand, daftar treatment, harga, durasi, foto asli, alamat, jam buka, tautan peta, dan nomor WhatsApp. Jangan menambahkan klaim medis atau janji hasil terapi tanpa dasar yang dapat dipertanggungjawabkan.
+
+Foto saat ini adalah ilustrasi stok, bukan dokumentasi lokasi Senzu. Status ini diatur melalui `imageDisclosure` di `src/config.ts` dan ditandai pada hero, galeri, serta footer. Setelah foto resmi tersedia:
+
+1. Ganti berkas di `public/images/`.
+2. Perbarui `src`, `alt`, `width`, dan `height` pada `heroImage`/`galleryPhotos`.
+3. Ubah `heroIsIllustration` dan `galleryIsIllustration` menjadi `false`, lalu sesuaikan `galleryNote`.
+
+Data bisnis yang belum dikonfirmasi tidak diisi dengan alamat, jam, harga, atau nomor karangan. Semua nilai tersebut berasal dari `.env` dan akan tampil dengan penanda “Perlu dikonfirmasi” selama belum tersedia.
